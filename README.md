@@ -1,0 +1,1 @@
+This work is about implementing parallel code with boost::mpi: A Boost.MPI program consists of many cooperating processes (possibly running on different computers) that communicate among themselves by passing messages.

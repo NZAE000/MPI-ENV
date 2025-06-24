@@ -20,12 +20,14 @@ main(int argc, char** argv)
     // The scatter collective scatters the values from a vector in the "root" process in a communicator into values in all the processes of the communicator.
     // The /i/th element in the vector will correspond to the value received by the /i/th process.
     if (pid == masterpid){  
-        all_random.resize(n_proc);
+        all_random.resize(n_proc); // Resize is must called, the std::generate algorithm needs 'begin' and 'end' iterators.
         std::generate(begin(all_random), end(all_random), std::rand);
     }
     bmpi::scatter(world, all_random, mine_value, masterpid);
-    std::cout<<"Here process #"<<pid<<", value_mine: "<<mine_value<<'\n';
+    std::cout<<"Here process #"<<pid<<", their value: "<<mine_value<<'\n';
     
+    // world.barrier(); // !
+
     for (uint32_t i=0; i<n_proc; ++i)
     {
         /*  Todos los procesos ejecutan el for: eso es fundamental en MPI. No hay “estructuras globales” como en programación secuencial: cada proceso ejecuta su propio flujo.

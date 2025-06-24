@@ -31,7 +31,10 @@ main(int argc, char** argv)
             std::cout<<"Process #"<<i<<" thought of "<<all_random[i]<<'\n';
         }
     }
-    else bmpi::gather(world, my_random, master_pid);
+    else {
+        std::cout<<"I am process #"<<pid<<" with rand value = "<<my_random<<'\n';
+        bmpi::gather(world, my_random, master_pid);
+    }
 
     return 0;
 }

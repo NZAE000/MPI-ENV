@@ -15,8 +15,9 @@ namespace bmpi = boost::mpi;
 namespace boost { 
     namespace mpi {
 
+        // Boost.MPI will assume that string concatenation is commutative and employ a different parallel algorithm for the reduce operation (NOTE: Never declare as commutative an operation that is not really commutative.). 
         template<>
-        struct is_commutative<std::plus<std::string>, std::string> // Boost.MPI will assume that string concatenation is commutative and employ a different parallel algorithm for the reduce operation. 
+        struct is_commutative<std::plus<std::string>, std::string>
           : mpl::true_ {};
 
     }
@@ -39,11 +40,11 @@ main(int argc, char** argv)
 
     
     if (pid == master_pid){
-        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), 0);
+        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), 0); // Master process receives result.
         std::cout<<"The result is "<<result_concat<<'\n';
     }
     else {
-        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), std::plus<std::string>(), 0);
+        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), std::plus<std::string>(), 0); // Other process only participate.
     }
 
     return 0;

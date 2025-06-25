@@ -1,81 +1,75 @@
-#include<boost/mpi.hpp>
-#include<boost/archive/text_oarchive.hpp>
-#include<iostream>
+#include <fstream>
+
+// Include headers that implement a archive in simple text format.
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 
-namespace bmpi = boost::mpi;
+/*
+In general, built-in C++ types (ints, floats, characters, etc.) can be transmitted over MPI directly, while user-defined and library-defined types will need to first be serialized (packed) into a format that is amenable to transmission. 
+Boost.MPI relies on the Boost.Serialization library to serialize and deserialize data types.
 
-struct Message_t {
+For types defined by the standard library (such as std::string or std::vector) and some types in Boost (such as boost::variant), the Boost.Serialization library already contains all of the required serialization code. 
+In these cases, you need only include the appropriate header from the boost/serialization directory.
 
-    explicit Message_t() = default;
+For types that do not already have a serialization header, you will first need to implement serialization code before the types can be transmitted using Boost.MPI. Consider a simple class gps_position that contains members degrees, minutes, and seconds. 
+This class is made serializable by making it a friend of boost::serialization::access and introducing the templated serialize() function, as follows.
+*/
 
-    explicit Message_t(uint32_t id, std::string mssge)
-    : id_{id}, mssge_{mssge} {}
-
-    friend class boost::serialization::access; // Serialization needs acces to private data.
-
-    template<typename Archive>
-    void serialize(Archive& ar, const unsigned int version) // Use boost serialization templates.
-    {
-        ar& id_; ar& mssge_;
-    }
-
+/////////////////////////////////////////////////////////////
+// gps coordinate
+//
+// Illustrates serialization for a simple type.
+//
+class gps_position
+{
 private:
-    uint32_t id_{};
-    std::string mssge_{};
+    friend class boost::serialization::access;
+    // When the class Archive corresponds to an output archive, the
+    // & operator is defined similar to <<.  Likewise, when the class Archive
+    // is a type of input archive the & operator is defined similar to >>.
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & degrees;
+        ar & minutes;
+        ar & seconds;
+    }
+    int degrees;
+    int minutes;
+    float seconds;
+public:
+    gps_position(){};
+    gps_position(int d, int m, float s) :
+        degrees(d), minutes(m), seconds(s)
+    {}
 };
 
+int main() {
+    // Create and open a character archive for output
+    std::ofstream ofs("filename");
 
-int 
-main(int argc, char** argv)
-{
-    bmpi::environment env{argc, argv};
-    bmpi::communicator world{};
+    // Create class instance
+    const gps_position g(35, 59, 24.567f);
 
-    uint32_t pid    { static_cast<uint32_t>(world.rank()) };
-    uint32_t n_proc { static_cast<uint32_t>(world.size()) };
-    uint32_t master_pid{0}, any_tag{20};
-
-    if (pid == master_pid){
-        for (uint32_t i=1; i<n_proc; ++i){
-            world.send(i, any_tag, Message_t{i, "Message from master"});
-        }
+    // Save data to archive
+    {
+        // Use the term "archive" to refer to a specific rendering of this stream of bytes. This could be a file of binary data, text data, XML, or some other created by the user of this library.
+        boost::archive::text_oarchive oa(ofs);
+        // Write class instance to archive
+        oa << g;
+    	// Archive and stream closed when destructors are called
     }
-    else{
-        Message_t mssge{};
-        world.recv(master_pid, any_tag, mssge);
-        //std::ostream os;
-        boost::archive::text_oarchive oa{std::cout};
-        oa<<"Process "<<pid<<" received message: "<<mssge<<'\n';
 
-        /*
-        ouput f.eg: 22 serialization::archive 20 9 80 114 111 99 101 115 115 32 0 3 20 32 114 101 99 101 105 118 101 100 32 109 101 115 115 97 103 101 58 32 0 0 0 3 19 Message from master 10
-                    22: lenght of serialization::archive
-                    "serialization::archive": identificador de formato usado por Boost
-                    20: versión del archivo o del archivo de texto Boost (es parte del protocolo de Boost)
-                    9: lenght of "Process "
-                    80  → P
-                    114 → r
-                    111 → o
-                    99  → c
-                    101 → e
-                    115 → s
-                    115 → s
-                    32  → espacio ' '
-                    0 3: pid del proceso que recibio el mensaje del master
-                    20: longitud de la cadena
-                    114 → r
-                    ...
-                    58  → :
-                    32  → espacio
-                    0 0 0 3: contenido de id_ del objeto mensaje (pid del proceso)
-                    19: longitud de la cadena.
-                    "Message from master": contenido de mssge_ del objeto mensaje
-                    10 → salto de línea (\n en ASCII).
-                    
-        */
+    // ... Some time later restore the class instance to its orginal state
+    gps_position newg;
+    {
+        // Create and open an archive for input
+        std::ifstream ifs("filename");
+        boost::archive::text_iarchive ia(ifs);
+        // Read class state from archive
+        ia >> newg;
+        // Archive and stream closed when destructors are called
     }
-    
-
     return 0;
 }

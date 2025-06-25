@@ -1,7 +1,5 @@
 #include<iostream>
 #include<boost/mpi.hpp>
-#include<string>
-
 
 
 struct Sum {

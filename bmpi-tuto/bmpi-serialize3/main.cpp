@@ -10,21 +10,36 @@ struct Message_t {
     explicit Message_t(uint32_t id, std::string mssge)
     : id_{id}, mssge_{mssge} {}
 
-    friend class boost::serialization::access; // Serialization needs acces to private data.
-
-    template<typename Archive>
-    void serialize(Archive& ar, const unsigned int version) // Use boost serialization templates.
-    {
-        ar& id_; ar& mssge_;
-    }
+    //friend class boost::serialization::access; // Serialization needs acces to private data.
+//
+    //template<typename Archive>
+    //void serialize(Archive& ar, const unsigned int version) // Use boost serialization templates.
+    //{
+    //    ar& id_; ar& mssge_;
+    //}
 
     uint32_t getId() const noexcept { return id_; }
     std::string const& getMssge() const noexcept { return mssge_; }
 
-private:
     uint32_t id_{};
     std::string mssge_{};
 };
+
+
+// Non intrusive.
+// NOTE: The main application of non-intrusive serialization is to permit serialization to be implemented for classes without changing the class definition. 
+// In order for this to be possible, the class must expose enough information to reconstruct the class state. In this example, we presumed that the class had public members - not a common occurrence.
+// Only classes which expose enough information to save and restore the class state will be serializable without changing the class definition.
+namespace boost {
+    namespace serialization {
+
+    template<typename Archive>
+    void serialize(Archive& ar, Message_t& mssg, const unsigned int version){
+        ar& mssg.id_; ar& mssg.mssge_;
+    }
+
+    }
+}
 
 
 namespace bmpi = boost::mpi;

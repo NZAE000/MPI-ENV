@@ -22,29 +22,48 @@ This class is made serializable by making it a friend of boost::serialization::a
 //
 // Illustrates serialization for a simple type.
 //
-class gps_position
+struct gps_position
 {
-private:
-    friend class boost::serialization::access; // Serialization needs acces to private data.
+    // friend class boost::serialization::access;   // Serialization needs acces to private data.
     // When the class Archive corresponds to an output archive, the
     // & operator is defined similar to <<.  Likewise, when the class Archive
     // is a type of input archive the & operator is defined similar to >>.
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & degrees;
-        ar & minutes;
-        ar & seconds;
-    }
-    int degrees;
-    int minutes;
-    float seconds;
-public:
-    gps_position(){};
+    //template<class Archive>
+    //void serialize(Archive & ar, const unsigned int version)
+    //{
+    //    ar & degrees;
+    //    ar & minutes;
+    //    ar & seconds;
+    //}
+    int degrees{};
+    int minutes{};
+    float seconds{};
+
+    gps_position() = default;
     gps_position(int d, int m, float s) :
         degrees(d), minutes(m), seconds(s)
     {}
 };
+
+/*
+The above formulation is intrusive. That is, it requires that classes whose instances are to be serialized be altered. 
+This can be inconvenient in some cases. An equivalent alternative formulation permitted by the system would be:
+NOTE: The main application of non-intrusive serialization is to permit serialization to be implemented for classes without changing the class definition. 
+In order for this to be possible, the class must expose enough information to reconstruct the class state. In this example, we presumed that the class had public members - not a common occurrence.
+Only classes which expose enough information to save and restore the class state will be serializable without changing the class definition.
+*/
+namespace boost {
+    namespace serialization {
+
+        template<class Archive> // In this case the generated serialize functions are not members of the gps_position class. The two formulations function in exactly the same way.
+        void serialize(Archive & ar, gps_position& gpos, unsigned int version)
+        {
+            ar & gpos.degrees;
+            ar & gpos.minutes;
+            ar & gpos.seconds;
+        }
+    }
+} // namespace boost::serialization
 
 
 /*
@@ -52,42 +71,39 @@ Some serializable types, like gps_position above, have a fixed amount of data st
 When this is the case, Boost.MPI can optimize their serialization and transmission by avoiding extraneous copy operations. 
 To enable this optimization, users must specialize the type trait is_mpi_datatype, e.g.:
 */ 
-//namespace boost { 
-//    namespace mpi { 
-//    
-//    template <>
-//    struct is_mpi_datatype<gps_position> : mpl::true_ { };
-//    
-//    } 
-//}
+namespace boost { 
+    namespace mpi { 
 
-
+    template <>
+    struct is_mpi_datatype<gps_position> : mpl::true_ { };
+    
+    } 
+}
 
 int main() {
-    // Create and open a character archive for output
-    std::ofstream ofs("filename");
 
-    // Create class instance
-    const gps_position g(35, 59, 24.567f);
 
-    // Save data to archive
+    std::ofstream ofs("filename");          // Create and open a character archive for output.
+    const gps_position g(35, 59, 24.567f);  // Create class instance.
+
+    // Save data to archive.
     {
         // Use the term "archive" to refer to a specific rendering of this stream of bytes. This could be a file of binary data, text data, XML, or some other created by the user of this library.
         boost::archive::text_oarchive oa(ofs);
-        // Write class instance to archive
+        // Write class instance to archive.
         oa << g;
-    	// Archive and stream closed when destructors are called
+    	// Archive and stream closed when destructors are called.
     }
 
-    // ... Some time later restore the class instance to its orginal state
+    // ... Some time later restore the class instance to its orginal state.
     gps_position newg;
     {
-        // Create and open an archive for input
+        // Create and open an archive for input.
         std::ifstream ifs("filename");
         boost::archive::text_iarchive ia(ifs);
-        // Read class state from archive
+        // Read class state from archive.
         ia >> newg;
-        // Archive and stream closed when destructors are called
+        // Archive and stream closed when destructors are called.
     }
     return 0;
 }

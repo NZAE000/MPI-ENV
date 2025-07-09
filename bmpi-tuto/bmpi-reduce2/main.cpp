@@ -20,15 +20,15 @@ main(int argc, char** argv)
     std::string names[6] = {"zero ", "one ", "two ", "three ", "four ", "five "};//, "six ", "seven ", "eight ", "nine "};
     std::string result_concat{};
 
-    //bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), 0);
+    //bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), master_pid);
     //if (pid == master_pid) std::cout<<"The result is "<<result_concat<<'\n';
     
     if (pid == master_pid){
-        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), 0); // Master process receives result.
+        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), result_concat, std::plus<std::string>(), master_pid); // Master process receives result.
         std::cout<<"The result is "<<result_concat<<'\n';
     }
     else {
-        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), std::plus<std::string>(), 0); // Other process only participate.
+        bmpi::reduce(world, pid < 6? names[pid] : std::string("many "), std::plus<std::string>(), master_pid); // Other process only participate.
     }
 
     return 0;

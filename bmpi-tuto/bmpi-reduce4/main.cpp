@@ -42,11 +42,11 @@ main(int argc, char** argv)
 
     
     if (pid == master_pid){
-        bmpi::reduce(world, pid < 6? names[pid] : 0, result_sum, Sum(), 0); // Master process receives result.
+        bmpi::reduce(world, pid < 6? names[pid] : 0, result_sum, Sum(), master_pid); // Master process receives result.
         std::cout<<"The sum is "<<result_sum<<'\n';
     }
     else {
-        bmpi::reduce(world, pid < 6? names[pid] : 0, Sum(), 0); // Other process only participate.
+        bmpi::reduce(world, pid < 6? names[pid] : 0, Sum(), master_pid); // Other process only participate.
     }
 
     return 0;

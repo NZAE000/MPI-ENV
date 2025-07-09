@@ -19,7 +19,7 @@ main(int argc, char** argv)
     if (pid == masterpid){
         mssg = "Hello, world!";
     }
-    bmpi::broadcast(world, mssg, 0);
+    bmpi::broadcast(world, mssg, masterpid);
 
     std::cout<<"Process #"<<pid<<" says "<<mssg<<'\n';
 

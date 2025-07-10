@@ -27,7 +27,7 @@ main(int argc, char** argv)
     std::cout<<"Here process #"<<pid<<", their value: "<<mine_value<<'\n';
     
     // world.barrier(); // !
-
+    //if (pid == masterpid) std::cout<<"Process #"<<masterpid<<" scatters the next values foreach process: \n";
     for (uint32_t i=0; i<n_proc; ++i)
     {
         /*  Todos los procesos ejecutan el for: eso es fundamental en MPI. No hay “estructuras globales” como en programación secuencial: cada proceso ejecuta su propio flujo.
@@ -39,7 +39,7 @@ main(int argc, char** argv)
         world.barrier(); // Wait for all processes within a communicator to reach (alcancen) the barrier.
                         // This routine is a collective operation that blocks each process until all processes have entered it, then releases all of the processes "simultaneously". It is equivalent to MPI_Barrier.
         if (i == pid)
-            std::cout<<"Process #"<<pid<<" got "<<mine_value<<'\n';
+            std::cout<<"\tProcess #"<<pid<<" got "<<mine_value<<'\n';
     }
     
     return 0;

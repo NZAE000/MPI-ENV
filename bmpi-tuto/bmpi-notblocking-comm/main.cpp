@@ -34,16 +34,16 @@ main(int argc, char** argv)
     {
         bmpi::request reqs[N_REQS];
         std::string mssg, out_mssg = "Hello";
-        reqs[0] = world.isend(1, 0, out_mssg);
-        reqs[1] = world.irecv(1, 1, mssg);
+        reqs[0] = world.isend(1, 0, out_mssg);  // Send to process 1 with tag 0.
+        reqs[1] = world.irecv(1, 1, mssg);      // Receive from process 1 with tag 1.
         bmpi::wait_all(reqs, reqs + N_REQS);
         std::cout<< mssg << "!\n";
     }
     else {
         bmpi::request reqs[N_REQS];
         std::string mssg, out_mssg = "world";
-        reqs[0] = world.isend(0, 1, out_mssg);
-        reqs[1] = world.irecv(0, 0, mssg);
+        reqs[0] = world.isend(0, 1, out_mssg);  // Send to process 0 with tag 1.
+        reqs[1] = world.irecv(0, 0, mssg);      // Receive from process 0 with tag 0.
         bmpi::wait_all(reqs, reqs + N_REQS);
         std::cout<< mssg << ", ";
     }

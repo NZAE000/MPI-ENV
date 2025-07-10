@@ -17,9 +17,9 @@ main(int argc, char** argv)
     if (pid == master_pid){
         std::string mssge{};
         
-        // Receive each message (pid) from other process.
+        // Receive each message (pid) from other process (blocking).
         for (uint32_t i=1; i<n_proc; ++i){
-            world.recv(bmpi::any_source, any_tag, mssge);
+            world.recv(bmpi::any_source /*i*/, any_tag, mssge);
             std::cout<<"Master receive: "<< mssge <<'\n';
         }
 

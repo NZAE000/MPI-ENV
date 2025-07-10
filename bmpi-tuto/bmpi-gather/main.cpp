@@ -27,8 +27,9 @@ main(int argc, char** argv)
         all_random.reserve(n_proc);
         bmpi::gather(world, my_random, all_random, master_pid); // (Also receive the master random).
         
+        std::cout<<"Process #"<<master_pid<< " recolected: \n"; 
         for (uint32_t i=0; i<n_proc; ++i){
-            std::cout<<"Process #"<<i<<" thought of "<<all_random[i]<<'\n';
+            std::cout<<"\tProcess #"<<i<<" thought of "<<all_random[i]<<'\n';
         }
     }
     else {

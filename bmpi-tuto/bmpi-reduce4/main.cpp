@@ -20,7 +20,7 @@ namespace boost {
 
         // Boost.MPI will assume that sum with two values is commutative and employ a different parallel algorithm for the reduce operation (NOTE: Never declare as commutative an operation that is not really commutative.). 
         template<>
-        struct is_commutative<Sum, uint32_t> : mpl::true_ {}; // Here it is safe to mark as commutative and Boost could optimize without risk.
+        struct is_commutative<Sum, uint32_t> : mpl::true_ {}; // <- (inheritance to template value metafunction) Here it is safe to mark as commutative and Boost could optimize without risk.
 
     }
 } // namespace boost::mpi

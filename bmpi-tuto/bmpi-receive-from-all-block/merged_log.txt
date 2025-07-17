@@ -1,0 +1,36 @@
+[14:50:32:466:830] Process 4 sent to master: I am the process 4
+[14:50:32:467:885] Process 3 sent to master: I am the process 3
+[14:50:32:467:889] Process 8 sent to master: I am the process 8
+[14:50:32:467:929] Process 6 sent to master: I am the process 6
+[14:50:32:467:937] Process 2 sent to master: I am the process 2
+[14:50:32:467:952] Process 9 sent to master: I am the process 9
+[14:50:32:467:959] Process 1 sent to master: I am the process 1
+[14:50:32:467:981] Process 5 sent to master: I am the process 5
+[14:50:32:467:983] Process 7 sent to master: I am the process 7
+[14:50:32:467:990] Master received from process 1: I am the process 1
+[14:50:32:468:293] Master sent to process 1: Thank! process 1
+[14:50:32:468:304] Master received from process 2: I am the process 2
+[14:50:32:468:311] Process 1 received from master: Thank! process 1
+[14:50:32:468:314] Master sent to process 2: Thank! process 2
+[14:50:32:468:319] Master received from process 3: I am the process 3
+[14:50:32:468:323] Process 2 received from master: Thank! process 2
+[14:50:32:468:327] Master sent to process 3: Thank! process 3
+[14:50:32:468:332] Master received from process 4: I am the process 4
+[14:50:32:468:332] Process 3 received from master: Thank! process 3
+[14:50:32:468:339] Master sent to process 4: Thank! process 4
+[14:50:32:468:347] Process 4 received from master: Thank! process 4
+[14:50:32:468:358] Master received from process 5: I am the process 5
+[14:50:32:468:366] Master sent to process 5: Thank! process 5
+[14:50:32:468:370] Process 5 received from master: Thank! process 5
+[14:50:32:468:386] Master received from process 6: I am the process 6
+[14:50:32:468:394] Master sent to process 6: Thank! process 6
+[14:50:32:468:398] Master received from process 7: I am the process 7
+[14:50:32:468:398] Process 6 received from master: Thank! process 6
+[14:50:32:468:401] Master sent to process 7: Thank! process 7
+[14:50:32:468:403] Master received from process 8: I am the process 8
+[14:50:32:468:406] Master sent to process 8: Thank! process 8
+[14:50:32:468:406] Process 7 received from master: Thank! process 7
+[14:50:32:468:409] Master received from process 9: I am the process 9
+[14:50:32:468:412] Master sent to process 9: Thank! process 9
+[14:50:32:468:424] Process 9 received from master: Thank! process 9
+[14:50:32:468:436] Process 8 received from master: Thank! process 8

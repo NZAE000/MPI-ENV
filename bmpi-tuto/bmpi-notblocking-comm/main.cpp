@@ -17,6 +17,9 @@ main(int argc, char** argv)
     uint32_t pid        { static_cast<uint32_t>(world.rank()) };
     uint32_t masterpid  {0};
 
+    // The default MPI communication operations--send and recv--may have to wait until the entire transmission is completed before they can return. 
+    // Sometimes this blocking behavior has a negative impact on performance, because the sender could be performing useful computation while it is waiting for the transmission to occur. 
+    // More important, however, are the cases where several communication operations must occur simultaneously, e.g., a process will both send and receive at the same time.
     // We have replaced calls to the communicator::send and communicator::recv members with similar calls to their non-blocking counterparts, 
     // communicator::isend and communicator::irecv. The prefix i indicates that the operations return immediately with a mpi::request object, 
     // which allows one to query the status of a communication request (see the test method) or wait until it has completed (see the wait method). 

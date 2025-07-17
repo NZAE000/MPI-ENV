@@ -27,10 +27,10 @@ main(int argc, char** argv)
     }
     else {
         std::string msg{};
-        world.recv(0, 0, msg);
+        world.recv(masterpid, 0, msg);
         std::cout << msg << ", ";
         std::cout.flush();
-        world.send(0, 1, std::string("world"));
+        world.send(masterpid, 1, std::string("world"));
     }
 
     return 0;

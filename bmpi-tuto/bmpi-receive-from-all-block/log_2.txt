@@ -1,0 +1,2 @@
+[14:50:32:467:937] Process 2 sent to master: I am the process 2
+[14:50:32:468:323] Process 2 received from master: Thank! process 2
